@@ -1,4 +1,31 @@
 
+
+---
+# regex
+
+"""
+. - any character except a new line
+* - 0 or more repetitions
++ - 1 or more repetitions
+? - 0 or 1 repetition
+{m} - m repetitions
+{m,n} - m-n repetitions
+\ - escape character
+r - use raw string in python
+^ - matches the start of the string
+$ - matches at the end of the string
+[] - set of characters
+[^] - cannot match set of characters
+\w - any word character [a-zA-Z0-9_]
+\W - not a word character
+\s - whitespace characters
+\S - not a whitespace character
+\d - decimal digit
+\D - not a decimal digit
+
+"""
+
+
 ---
 # write to files
 
