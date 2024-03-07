@@ -22,9 +22,47 @@ $ - matches at the end of the string
 \S - not a whitespace character
 \d - decimal digit
 \D - not a decimal digit
-
+A|B - either A or B
+(..) - capture group, reference with group(1)
+(?:) - non capturing
 """
 
+import re 
+
+email = input("What's your email? ").strip 
+
+if re.search(r"^\w+@(\w+\.)?\w+\{.edu|.com|.org}$", email, re.IGNORECASE):
+    print("Valid")
+else:
+    print("Invalid")
+
+
+# Clean up user input 
+import re 
+
+name = input("What's your name? ").strip()
+
+if matches := re.search(r"^(.+), *(.+)$", name):
+    name - matches.group(2) + " " + matches.group(1)
+print(f"hello, {name}")
+
+
+# Get user input
+
+import re
+
+# get input, strip off spaces
+url = input("URL: ").strip()
+
+# if matches := re.search is the same as
+# matches = re.search()
+# if matches:
+#     print()
+# r - raw string
+# https?: - s is optional
+# (?:www\.)? - non capturing syntax and www. is iptional. Also escapes . character
+if matches := re.search(r"^https?://(?:www\.)?twitter\.com/([a-z0-9_]+), url, re.IGNORECASE"):
+    print(f"Username: ", matches.group(1))
 
 ---
 # write to files
