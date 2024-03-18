@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ include "chart.fullname" . }}-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{ include "chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{ include "chart.labels" . | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{ include "chart.labels" . | nindent 8 }}
+    spec:
+      initContainers:
+      - name: install-dnsmasq
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - apk update && apk add dnsmasq &&  cp /usr/sbin/dnsmasq /shared/
+        volumeMounts:
+        - name: {{ include "chart.fullname" . }}-shared
+          mountPath: /shared
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: IfNotPresent
+        command: ["sh", "-c"]
+        ports: 
+        - containerPort: 53
+          protocol: TCP
+        - containerPort: 53
+          protocol: UDP
+        args:  
+        - adduser -D dnsmasq ; cp /shared/dnsmasq /usr/sbin && dnsmasq -k
+        resources: 
+          requests: 
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
+          limits: 
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
+        volumeMounts:
+        - name: {{ include "chart.fullname" . }}-config
+          mountPath: /etc/dnsmasq.conf
+          subPath: dnsmasq.conf
+        - name: {{ include "chart.fullname" . }}-shared
+          mountPath: /shared
+      volumes:
+      - name: {{ include "chart.fullname" . }}-config
+        configMap:
+          name: {{ include "chart.fullname" . }}-config
+      - name: {{ include "chart.fullname" . }}-shared
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "chart.fullname" . }}-shared
+      {{- else }}
+        emptyDir: {}
+      {{- end }}

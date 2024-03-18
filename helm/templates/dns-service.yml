@@ -1,0 +1,20 @@
+apiVersion: v1 
+kind: Service 
+metadata: 
+  labels: 
+    {{ include "chart.labels" . | nindent 4 }}
+  name: {{ include "chart.fullname" . }}-svc
+  namespace: {{ .Values.namespace }}
+spec: 
+  type: {{ .Values.service.type }}
+  ports: 
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 53
+      name: {{ include "chart.fullname" . }}-tcp 
+    - protocol: UDP 
+      port: {{ .Values.service.port }}
+      targetPort: 53
+      name: {{ include "chart.fullname" . }}-udp
+  selector: 
+    app: {{ .Release.Name }}

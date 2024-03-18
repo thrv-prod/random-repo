@@ -1,0 +1,1 @@
+{{ .Release.Name }} has been installed using {{ .Chart.Name }} {{ .Chart.Version }}!
